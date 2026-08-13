@@ -83,7 +83,7 @@ export async function createLogs(logs: LogInput[]) {
     );
   }
 
-  const result = await pool.query(
+  await pool.query(
     `
       INSERT INTO logs (
         timestamp,
@@ -93,21 +93,12 @@ export async function createLogs(logs: LogInput[]) {
         attributes
       )
       VALUES ${rows.join(", ")}
-      RETURNING
-        id,
-        timestamp,
-        level,
-        service,
-        message,
-        attributes,
-        created_at
     `,
     values,
   );
 
-  return result.rows;
+  return logs;
 }
-
 export async function getLogs(query: LogQuery) {
   const values: unknown[] = [];
   const conditions: string[] = [];
