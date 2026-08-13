@@ -11,6 +11,11 @@ services:
       - postgres_data:/var/lib/postgresql
     cpus: "1.0"
     mem_limit: 1g
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logs_user -d logs_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   app:
     build: .
@@ -23,7 +28,8 @@ services:
       DB_USER: logs_user
       DB_PASSWORD: logs_password
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     cpus: "0.5"
     mem_limit: 256m
 
