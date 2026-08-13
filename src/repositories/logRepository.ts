@@ -17,17 +17,26 @@ function decodeCursor(cursor: string): { timestamp: string; id: string } {
 
     if (
       typeof parsed.timestamp !== "string" ||
-      typeof parsed.id !== "string"
+      typeof parsed.id !== "string" ||
+      !/^\d+$/.test(parsed.id)
     ) {
       throw new Error();
     }
 
-    return parsed;
+    const timestamp = new Date(parsed.timestamp);
+
+    if (Number.isNaN(timestamp.getTime())) {
+      throw new Error();
+    }
+
+    return {
+      timestamp: timestamp.toISOString(),
+      id: parsed.id,
+    };
   } catch {
     throw new Error("Invalid cursor");
   }
 }
-
 export async function createLog(log: LogInput) {
   const result = await pool.query(
     `

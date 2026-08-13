@@ -1,6 +1,6 @@
 import { pool } from "../db/pool.js";
 
-const retentionDays = Number(process.env.RETENTION_DAYS ?? 30);
+const retentionDays = Number(process.env.RETENTION_DAYS || 30);
 
 const cleanupIntervalMs = 60 * 60 * 1000; // 1 hour
 const batchSize = 10_000;
