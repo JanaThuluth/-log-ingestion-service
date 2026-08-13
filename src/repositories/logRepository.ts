@@ -45,8 +45,7 @@ export async function createLog(log: LogInput) {
         level,
         service,
         message,
-        attributes,
-        created_at
+        attributes
     `,
     [
       log.timestamp,

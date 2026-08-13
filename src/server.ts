@@ -1,8 +1,10 @@
+
 import type { LogInput } from "./validation/log.js";
 import { startRetentionCleanup } from "./services/retention.js";
 import Fastify from "fastify";
 import { checkDatabaseConnection } from "./db/pool.js";
 import { runMigrations } from "./db/migrate.js";
+
 import { logSchema , logsBatchSchema } from "./validation/log.js";
 import {
   createLogs,
@@ -14,7 +16,7 @@ import {
   aggregateQuerySchema,
 } from "./validation/logQuery.js";
 
-const app = Fastify({
+export const app = Fastify({
   logger: true,
   bodyLimit: 2 * 1024 * 1024,
 });
@@ -120,17 +122,20 @@ app.post("/logs", async (request, reply) => {
   let accepted = 0;
 
   if (validLogs.length > 0) {
-    try {
-      await createLogs(validLogs.map((item) => item.data));
-      accepted = validLogs.length;
-    } catch {
-      for (const item of validLogs) {
-        rejected.push({
-          index: item.index,
-          reason: "Failed to store log",
-        });
-      }
-    }
+ try {
+  await createLogs(validLogs.map((item) => item.data));
+  accepted = validLogs.length;
+} catch (error) {
+  console.error("CREATE LOGS ERROR:", error);
+
+  for (const item of validLogs) {
+    rejected.push({
+      index: item.index,
+      reason: "Failed to store log",
+    });
+  }
+}
+      
   }
 
   if (accepted === 0) {
@@ -162,4 +167,6 @@ const start = async () => {
   }
 };
 
-start();
+if (process.env.NODE_ENV !== "test") {
+  start();
+}
