@@ -33,6 +33,16 @@ app.get("/logs", async (request, reply) => {
     });
   }
 
+  if (
+    result.data.since &&
+    result.data.until &&
+    result.data.until <= result.data.since
+  ) {
+    return reply.status(400).send({
+      error: "until must be after since",
+    });
+  }
+
   try {
     return await getLogs(result.data);
   } catch (error) {

@@ -157,10 +157,14 @@ export async function getLogs(query: LogQuery) {
 for (const [key, value] of attributeFilters) {
   const attributeKey = key.slice(5);
 
+  values.push(attributeKey);
+  const keyParam = values.length;
+
   values.push(value);
+  const valueParam = values.length;
 
   conditions.push(
-    `attributes ->> '${attributeKey.replace(/'/g, "''")}' = $${values.length}`,
+    `attributes ->> $${keyParam} = $${valueParam}`,
   );
 }
 
@@ -243,10 +247,14 @@ export async function aggregateLogs(query: AggregateQuery) {
 for (const [key, value] of attributeFilters) {
   const attributeKey = key.slice(5);
 
+  values.push(attributeKey);
+  const keyParam = values.length;
+
   values.push(value);
+  const valueParam = values.length;
 
   conditions.push(
-    `attributes ->> '${attributeKey.replace(/'/g, "''")}' = $${values.length}`,
+    `attributes ->> $${keyParam} = $${valueParam}`,
   );
 }
 

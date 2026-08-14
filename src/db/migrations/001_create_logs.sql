@@ -12,11 +12,6 @@ CREATE TABLE IF NOT EXISTS logs (
     CONSTRAINT logs_level_check
     CHECK (level IN ('debug', 'info', 'warn', 'error'))
 );
+
 CREATE INDEX IF NOT EXISTS idx_logs_timestamp_id
 ON logs (timestamp DESC, id DESC);
-
-CREATE INDEX IF NOT EXISTS idx_logs_service
-ON logs (service);
-
-CREATE INDEX IF NOT EXISTS idx_logs_level
-ON logs (level);
