@@ -1,11 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+
 import { app } from "../src/server.js";
 import { runMigrations } from "../src/db/migrate.js";
-import { checkDatabaseConnection } from "../src/db/pool.js";
+import { checkDatabaseConnection, pool } from "../src/db/pool.js";
 
 await checkDatabaseConnection();
 await runMigrations();
+
 test("GET /health returns 200", async () => {
   const response = await app.inject({
     method: "GET",
@@ -13,6 +15,7 @@ test("GET /health returns 200", async () => {
   });
 
   assert.equal(response.statusCode, 200);
+
   assert.deepEqual(response.json(), {
     status: "ok",
   });
@@ -37,11 +40,16 @@ test("POST /logs accepts a valid log", async () => {
       ],
     },
   });
-   console.log(response.body);
+
   assert.equal(response.statusCode, 200);
 
   const body = response.json();
 
   assert.equal(body.accepted, 1);
   assert.deepEqual(body.rejected, []);
+});
+
+test.after(async () => {
+  await app.close();
+  await pool.end();
 });

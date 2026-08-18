@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "NODE_ENV=test node --import tsx --test tests/**/*.test.ts"
+    "test": "NODE_ENV=test tsx --test tests/**/*.test.ts"
   },
   "keywords": [],
   "author": "",
