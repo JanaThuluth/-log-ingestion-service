@@ -6,7 +6,7 @@ export const pool = new Pool({
   database: process.env.DB_NAME ?? "logs_db",
   user: process.env.DB_USER ?? "logs_user",
   password: process.env.DB_PASSWORD ?? "logs_password",
-  max: 20,
+  max: 10,
   min: 5,
 
   idleTimeoutMillis: 30_000,
