@@ -33,20 +33,24 @@ export async function runMigrations(): Promise<void> {
     const filePath = path.join(migrationsDir, filename);
     const sql = await readFile(filePath, "utf8");
 
-    await pool.query("BEGIN");
+    const client = await pool.connect();
 
     try {
-      await pool.query(sql);
+      await client.query("BEGIN");
 
-      await pool.query(
+      await client.query(sql);
+
+      await client.query(
         "INSERT INTO schema_migrations (filename) VALUES ($1)",
         [filename],
       );
 
-      await pool.query("COMMIT");
+      await client.query("COMMIT");
     } catch (error) {
-      await pool.query("ROLLBACK");
+      await client.query("ROLLBACK");
       throw error;
+    } finally {
+      client.release();
     }
   }
 }
